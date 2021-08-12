@@ -7,7 +7,7 @@ BoilerplateListener .NET 5
  * Test project (using Moq and XUnit)
  * Metrics and Healthchecks
  * Logging configurations (using Serilog)
- * Kafka listener
+ * Kafka publisher and subscriber
  * System.Reactive for job interval timer
  * Dockerfile
 

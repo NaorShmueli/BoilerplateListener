@@ -18,12 +18,12 @@
     "BoilerplateListener": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:5000/swagger",
+      "launchUrl": "http://localhost:8083/swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",
-      "applicationUrl": "http://localhost:5000"
+      "applicationUrl": "http://localhost:8083"
     }
   }
 }
