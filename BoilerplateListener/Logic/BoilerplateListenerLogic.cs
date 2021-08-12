@@ -41,14 +41,18 @@ namespace Logic
                 return;
             }
             isSubscribed = true;
-            _sampleKafkaSubscriber.Subscribe(producerTopic, (x) => Console.WriteLine($"Message recevied {JsonConvert.SerializeObject(x)}"));
+            Task.Factory.StartNew(() =>
+            {
+                _sampleKafkaSubscriber.Subscribe(producerTopic, (x) => Console.WriteLine($"Message recevied {JsonConvert.SerializeObject(x)}"));
+            });
             _subscription
                .Subscribe(x =>
                {
                    Console.WriteLine($"Job is working {DateTime.Now}");
-                   var sampleMessage = new { Name = "Naor", Age = 30 };
-                   var jobject = new JObject(sampleMessage);
-                   _sampleKafkaPublisher.Publish(jobject, producerTopic);
+                   var jobj = new JObject();
+                   jobj.Add("Name", "Naor");
+                   jobj.Add("Age", 30);
+                   _sampleKafkaPublisher.Publish(jobj, producerTopic);
                });
         }
     }

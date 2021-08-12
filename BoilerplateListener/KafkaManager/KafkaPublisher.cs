@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using KafkaManager.Interfaces;
+using KafkaManager.Serializers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -14,7 +15,7 @@ namespace KafkaManager
 {
     public class KafkaPublisher : ISampleKafkaPublisher
     {
-        private IProducer<Ignore,object> _producer;
+        private IProducer<string,object> _producer;
         private readonly ILogger<KafkaPublisher> _logger;
         private static readonly string AppName = Assembly.GetEntryAssembly()?.GetName().Name;
         public KafkaPublisher(IConfiguration configuration, ILogger<KafkaPublisher> logger)
@@ -36,7 +37,8 @@ namespace KafkaManager
                 BootstrapServers = configuration["BOOTSTRAP_SERVERS"],
                 ClientId = AppName
             };
-            _producer =  new ProducerBuilder<Ignore, object>(producerConfig)
+            _producer =  new ProducerBuilder<string, object>(producerConfig)
+               .SetValueSerializer(new CustomJsonSerializer<object>())
                .SetLogHandler((producer, confluentLogModel) => _logger.LogInformation(confluentLogModel.Message))
                .SetErrorHandler((producer, confluentLogError) => _logger.LogError(confluentLogError.Reason))
                .Build();
@@ -44,11 +46,11 @@ namespace KafkaManager
 
         public async Task Publish(JObject json, string topic)
         {
-            Message<Ignore, object> message = new Message<Ignore, object>
+            Message<string, object> message = new Message<string, object>
             {
                 Value = json
             };
-            DeliveryResult<Ignore, object> result = await _producer.ProduceAsync(topic, message);
+            DeliveryResult<string, object> result = await _producer.ProduceAsync(topic, message);
             _logger.LogInformation($"Message status: {result.Status}");
         }
     }

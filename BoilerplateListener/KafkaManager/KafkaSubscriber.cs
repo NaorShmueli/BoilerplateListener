@@ -1,7 +1,9 @@
 ﻿using Confluent.Kafka;
 using KafkaManager.Interfaces;
+using KafkaManager.Serializers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +17,10 @@ namespace KafkaManager
     {
         private readonly ILogger<KafkaSubscriber> _logger;
         private static readonly string AppName = Assembly.GetEntryAssembly()?.GetName().Name;
-        private IConsumer<Ignore, object> _consumer;
-        public KafkaSubscriber(IConfiguration configuration)
+        private IConsumer<string, object> _consumer;
+        public KafkaSubscriber(IConfiguration configuration, ILogger<KafkaSubscriber> logger)
         {
+            _logger = logger;
             InitConsumer(configuration);
         }
 
@@ -35,7 +38,8 @@ namespace KafkaManager
                 ClientId = AppName
             };
 
-            _consumer =  new ConsumerBuilder<Ignore, object>(consumerConfig)
+            _consumer = new ConsumerBuilder<string, object>(consumerConfig)
+                .SetValueDeserializer(new CustomJsonDeserializer<object>())
                 .SetLogHandler((consumer, confluentLogModel) => _logger.LogInformation(confluentLogModel.Message))
                 .SetErrorHandler((consumer, confluentLogError) => _logger.LogError(confluentLogError.Reason))
                 .Build();
