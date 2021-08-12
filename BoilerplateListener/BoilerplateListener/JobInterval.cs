@@ -29,7 +29,8 @@ namespace BoilerplateListener
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogDebug($"JobInterval task doing background work.");
-                _boilerplateListenerLogic.Job();
+                 _boilerplateListenerLogic.Job();
+                await Task.Delay(1000);
             }
 
             _logger.LogWarning($"JobInterval background task is stopping.");
