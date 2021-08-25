@@ -18,7 +18,7 @@
     "BoilerplateListener": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:8083/swagger",
+      "launchUrl": "http://localhost:8083/health",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
